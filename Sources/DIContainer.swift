@@ -18,13 +18,13 @@ public final class DIContainer {
 	}
 
 	@discardableResult
-	func register(_ object: @autoclosure () -> DIObject) -> Self {
+	public func register(_ object: @autoclosure () -> DIObject) -> Self {
 		let builder = object()
 		self.objects[builder.types] = builder
 		return self
 	}
 
-	func resolve<T>(_ objectType: T.Type = T.self) -> T! {
+	public func resolve<T>(_ objectType: T.Type = T.self) -> T! {
 		self.objects
 			.first { $0.key.contains(String(describing: T.self)) }?
 			.value
