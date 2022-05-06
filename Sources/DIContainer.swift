@@ -28,6 +28,6 @@ public final class DIContainer {
 		self.objects
 			.first { $0.key.contains(DIType(objectType)) }?
 			.value
-			.makeObject(self, T.self)
+			.makeObject(self) as? T
 	}
 }

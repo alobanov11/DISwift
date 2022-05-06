@@ -28,13 +28,10 @@ public final class DIObject {
 		return self
 	}
 
-	func makeObject<T>(_ container: DIContainer, _ objectType: T.Type) -> T? {
-		if let object = self.box.object as? T {
-			return object
-		}
+	func makeObject(_ container: DIContainer) -> Any? {
+		if let object = self.box.object { return object }
 
-		guard let resolver = self.resolver as? (DIContainer) -> T else { return nil }
-
+		let resolver = self.resolver as! (DIContainer) -> Any
 		let object = resolver(container)
 
 		self.box.object = object
