@@ -7,10 +7,10 @@ import Foundation
 public final class DIObject {
 	private(set) var types: [DIType] = []
 
-	private let resolver: Any
+	private let resolver: (DIContainer) -> Any
 	private let box: DIBox
 
-	init(resolver: Any, box: DIBox) {
+	init(resolver: @escaping (DIContainer) -> Any, box: DIBox) {
 		self.resolver = resolver
 		self.box = box
 	}
@@ -28,11 +28,10 @@ public final class DIObject {
 		return self
 	}
 
-	func makeObject(_ container: DIContainer) -> Any? {
+	func makeObject(_ container: DIContainer) -> Any {
 		if let object = self.box.object { return object }
 
-		let resolver = self.resolver as! (DIContainer) -> Any
-		let object = resolver(container)
+		let object = self.resolver(container)
 
 		self.box.object = object
 
