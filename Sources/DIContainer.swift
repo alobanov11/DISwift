@@ -26,7 +26,13 @@ public final class DIContainer {
 
 	public func resolve<T>(_ objectType: T.Type = T.self) -> T! {
 		self.objects
-			.first { $0.key.contains(String(describing: T.self).replacingOccurrences(of: "?", with: "")) }?
+			.first {
+				$0.key.contains(
+					String(describing: T.self)
+						.replacingOccurrences(of: "Optional<", with: "")
+						.replacingOccurrences(of: ">", with: "")
+				)
+			}?
 			.value
 			.makeObject(self, T.self)
 	}
