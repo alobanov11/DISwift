@@ -29,7 +29,9 @@ public final class DIObject {
 	}
 
 	func makeObject(_ container: DIContainer) -> Any {
-		if let object = self.box.object { return object }
+		if let object = self.box.object {
+			return object
+		}
 
 		let object = self.resolver(container)
 
