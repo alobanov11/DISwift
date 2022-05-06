@@ -11,7 +11,7 @@ public prefix func *<T>(container: DIContainer) -> T {
 }
 
 public final class DIContainer {
-	private var objects: [[String]: DIObject] = [:]
+	private var objects: [[DIType]: DIObject] = [:]
 
 	public init(_ frameworks: [DIFramework] = []) {
 		frameworks.forEach { $0.register(with: self) }
@@ -26,14 +26,8 @@ public final class DIContainer {
 
 	public func resolve<T>(_ objectType: T.Type = T.self) -> T! {
 		self.objects
-			.first {
-				$0.key.contains(String(describing: T.self))
-			}?
+			.first { $0.key.contains(DIType(objectType)) }?
 			.value
 			.makeObject(self, T.self)
-	}
-
-	public func resolve<T>(_ objectType: Optional<T>.Type = Optional<T>.self) -> T! {
-		self.resolve(T.self)
 	}
 }

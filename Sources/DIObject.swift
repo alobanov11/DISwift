@@ -5,7 +5,7 @@
 import Foundation
 
 public final class DIObject {
-	private(set) var types: [String] = []
+	private(set) var types: [DIType] = []
 
 	private let resolver: Any
 	private let box: DIBox
@@ -24,7 +24,7 @@ public final class DIObject {
 	}
 
 	public func `as`<T>(_ type: T.Type) -> Self {
-		self.types.append(String(describing: T.self))
+		self.types.append(.init(type))
 		return self
 	}
 
