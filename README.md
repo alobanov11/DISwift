@@ -22,9 +22,8 @@ container.register(
     .single(TokenStorage()).as(ITokenStorage.self)
 )
 
-container.resolve(ITokenStorage.self)
-
-// Short variant
+let tokenStorage = container.resolve(ITokenStorage.self)
+// or
 let authUseCase: IAuthUseCase = *container
 
 

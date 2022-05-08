@@ -11,7 +11,7 @@ public prefix func *<T>(container: DIContainer) -> T {
 }
 
 public final class DIContainer {
-	private var objects: [[DIType]: DIObject] = [:]
+	private var objects: [DIType: DIObject] = [:]
 
 	public init(_ frameworks: [DIFramework] = []) {
 		frameworks.forEach { $0.register(with: self) }
@@ -20,14 +20,11 @@ public final class DIContainer {
 	@discardableResult
 	public func register(_ object: @autoclosure () -> DIObject) -> Self {
 		let builder = object()
-		self.objects[builder.types] = builder
+		builder.types.forEach { self.objects[$0] = builder }
 		return self
 	}
 
 	public func resolve<T>(_ objectType: T.Type = T.self) -> T! {
-		self.objects
-			.first { $0.key.contains(DIType(objectType)) }?
-			.value
-			.makeObject(self) as? T
+		self.objects[DIType(objectType)]?.makeObject(self) as? T
 	}
 }
