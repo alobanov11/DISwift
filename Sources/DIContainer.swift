@@ -25,6 +25,9 @@ public final class DIContainer {
 	}
 
 	public func resolve<T>(_ objectType: T.Type = T.self) -> T! {
-		self.objects[DIType(objectType)]?.makeObject(self) as? T
+		guard let object = self.objects[DIType(objectType)]?.makeObject(self) as? T else {
+			fatalError("Could not resolve \(String(describing: T.self))")
+		}
+		return object
 	}
 }
