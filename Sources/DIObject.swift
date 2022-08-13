@@ -19,7 +19,7 @@ public final class DIObject {
 		.init(resolver: resolver, box: WeakBox()).as(T.self)
 	}
 
-	public static func `weak`<T: AnyObject>(_ resolver: @autoclosure @escaping () -> T) -> DIObject {
+	public static func `weak`<T: AnyObject>(_ resolver: @escaping () -> T) -> DIObject {
 		.init(resolver: { _ in resolver() }, box: WeakBox()).as(T.self)
 	}
 
@@ -27,7 +27,7 @@ public final class DIObject {
 		.init(resolver: resolver, box: SingleBox()).as(T.self)
 	}
 
-	public static func single<T>(_ resolver: @autoclosure @escaping () -> T) -> DIObject {
+	public static func single<T>(_ resolver: @escaping () -> T) -> DIObject {
 		.init(resolver: { _ in resolver() }, box: SingleBox()).as(T.self)
 	}
 
