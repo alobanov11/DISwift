@@ -1,33 +1,18 @@
-//
-//  Created by Антон Лобанов on 08.04.2022.
-//
-
 import Foundation
 
-prefix operator *
-
-public prefix func *<T>(container: DIContainer) -> T {
-	container.resolve()
-}
-
 public final class DIContainer {
-	private var objects: [DIType: DIObject] = [:]
+    public static var global = DIContainer()
 
-	public init(_ frameworks: [DIFramework] = []) {
-		frameworks.forEach { $0.register(with: self) }
-	}
+    private var storage: [ObjectIdentifier: Any] = [:]
 
-	@discardableResult
-	public func register(_ object: @autoclosure () -> DIObject) -> Self {
-		let builder = object()
-		builder.types.forEach { self.objects[$0] = builder }
-		return self
-	}
+    public init() {}
 
-	public func resolve<T>(_ objectType: T.Type = T.self) -> T! {
-		guard let object = self.objects[DIType(objectType)]?.makeObject(self) as? T else {
-			fatalError("Could not resolve \(String(describing: T.self))")
-		}
-		return object
-	}
+    public subscript<Key: DIKey>(key: Key.Type) -> Key.Value {
+        get {
+            return (storage[ObjectIdentifier(key)] as? Key.Value) ?? Key.defaultValue
+        }
+        set {
+            storage[ObjectIdentifier(key)] = newValue
+        }
+    }
 }
