@@ -2,22 +2,20 @@ import Foundation
 
 prefix operator *
 
-public prefix func *<T>(container: DIContainer) -> T {
-	container.resolve()
+public prefix func *<T>(container: DIContainer) -> T! {
+    try? container.resolve()
+}
+
+public enum DIError: Error {
+    case failedToResolve(String)
 }
 
 public final class DIContainer {
-    public static let global = DIContainer()
+    public static var global = DIContainer()
 
 	private var objects: [DIType: DIObject] = [:]
 
-	public init(_ frameworks: [DIFramework] = []) {
-        self.register(frameworks)
-	}
-
-    public func register(_ frameworks: [DIFramework]) {
-        frameworks.forEach { $0.register(with: self) }
-    }
+	public init() {}
 
 	@discardableResult
 	public func register(_ object: @autoclosure () -> DIObject) -> Self {
@@ -26,10 +24,23 @@ public final class DIContainer {
 		return self
 	}
 
-	public func resolve<T>(_ objectType: T.Type = T.self) -> T! {
+	public func resolve<T>(_ objectType: T.Type = T.self) throws -> T {
 		guard let object = self.objects[DIType(objectType)]?.makeObject(self) as? T else {
-			fatalError("Could not resolve \(String(describing: T.self))")
+            throw DIError.failedToResolve(String(describing: T.self))
 		}
 		return object
 	}
+
+    public func retrieve<T>(
+        _ object: @autoclosure () -> DIObject,
+        _ objectType: T.Type = T.self
+    ) -> T {
+        do {
+            return try self.resolve(T.self)
+        }
+        catch {
+            self.register(object())
+            return *self
+        }
+    }
 }
