@@ -17,6 +17,10 @@ public final class DIContainer {
 
 	public init() {}
 
+    subscript<T>(key: T.Type) -> T {
+        *self
+    }
+
 	@discardableResult
 	public func register(_ object: @autoclosure () -> DIObject) -> Self {
 		let builder = object()

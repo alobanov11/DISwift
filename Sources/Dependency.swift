@@ -9,6 +9,6 @@ public struct Dependency<Value> {
     }
 
     public var wrappedValue: Value {
-        *DIContainer.global
+        DIContainer.global[keyPath: keyPath]
     }
 }
