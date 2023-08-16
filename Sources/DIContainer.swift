@@ -1,7 +1,3 @@
-//
-//  Created by Антон Лобанов on 08.04.2022.
-//
-
 import Foundation
 
 prefix operator *
@@ -11,11 +7,17 @@ public prefix func *<T>(container: DIContainer) -> T {
 }
 
 public final class DIContainer {
+    public static let global = DIContainer()
+
 	private var objects: [DIType: DIObject] = [:]
 
 	public init(_ frameworks: [DIFramework] = []) {
-		frameworks.forEach { $0.register(with: self) }
+        self.register(frameworks)
 	}
+
+    public func register(_ frameworks: [DIFramework]) {
+        frameworks.forEach { $0.register(with: self) }
+    }
 
 	@discardableResult
 	public func register(_ object: @autoclosure () -> DIObject) -> Self {

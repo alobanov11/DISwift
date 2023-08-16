@@ -1,7 +1,3 @@
-//
-//  Created by Антон Лобанов on 06.05.2022.
-//
-
 import Foundation
 
 public final class DIObject {

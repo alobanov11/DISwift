@@ -1,7 +1,3 @@
-//
-//  Created by Антон Лобанов on 07.05.2022.
-//
-
 import Foundation
 
 struct DIType {
