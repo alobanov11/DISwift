@@ -15,6 +15,8 @@ public final class DIContainer {
 
 	private var objects: [DIType: DIObject] = [:]
 
+    private let queue = DispatchQueue(label: "DISwift.DIContainer.queue")
+
 	public init() {}
 
     subscript<T>(key: T.Type) -> T {
@@ -23,16 +25,20 @@ public final class DIContainer {
 
 	@discardableResult
 	public func register(_ object: @autoclosure () -> DIObject) -> Self {
-		let builder = object()
-		builder.types.forEach { self.objects[$0] = builder }
-		return self
+        self.queue.sync {
+            let builder = object()
+            builder.types.forEach { self.objects[$0] = builder }
+            return self
+        }
 	}
 
 	public func resolve<T>(_ objectType: T.Type = T.self) throws -> T {
-		guard let object = self.objects[DIType(objectType)]?.makeObject(self) as? T else {
+        guard let object = self.queue.sync(execute: {
+            self.objects[DIType(objectType)]?.makeObject(self) as? T
+        }) else {
             throw DIError.failedToResolve(String(describing: T.self))
-		}
-		return object
+        }
+        return object
 	}
 
     public func retrieve<T>(
