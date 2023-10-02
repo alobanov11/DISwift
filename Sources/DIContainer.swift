@@ -11,11 +11,9 @@ public enum DIError: Error {
 }
 
 public final class DIContainer {
-    public static var global = DIContainer()
+    public static let global = DIContainer()
 
-	private var objects: [DIType: DIObject] = [:]
-
-    private let queue = DispatchQueue(label: "DISwift.DIContainer.queue")
+    private let group = DIGroup()
 
 	public init() {}
 
@@ -25,17 +23,13 @@ public final class DIContainer {
 
 	@discardableResult
 	public func register(_ object: @autoclosure () -> DIObject) -> Self {
-        self.queue.sync {
-            let builder = object()
-            builder.types.forEach { self.objects[$0] = builder }
-            return self
-        }
+        let builder = object()
+        builder.types.forEach { self.group[$0] = builder }
+        return self
 	}
 
 	public func resolve<T>(_ objectType: T.Type = T.self) throws -> T {
-        guard let object = self.queue.sync(execute: {
-            self.objects[DIType(objectType)]?.makeObject(self) as? T
-        }) else {
+        guard let object = self.group[DIType(objectType)]?.makeObject(self) as? T else {
             throw DIError.failedToResolve(String(describing: T.self))
         }
         return object
